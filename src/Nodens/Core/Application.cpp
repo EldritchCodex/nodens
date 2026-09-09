@@ -139,7 +139,8 @@ void Application::Run()
 bool Application::OnWindowClose(InputEvents::WindowClose& e)
 {
     m_Running = false;
-    return false; // Do not consume the event. Let other layers know that the application will be closed.
+    return false; // Do not consume the event. Let other layers know that the application will be
+                  // closed.
 }
 
 void Application::OnInputEvent(RoutedInputEvent& e)

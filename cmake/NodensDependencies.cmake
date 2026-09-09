@@ -34,6 +34,8 @@ FetchContent_Declare(glfw
 )
 
 # ─── Tracy ───────────────────────────────────────────────────────────────────
+set(TRACY_ENABLE OFF CACHE BOOL "" FORCE)
+
 FetchContent_Declare(tracy
     GIT_REPOSITORY https://github.com/wolfpld/tracy.git
     GIT_TAG        v0.13.1
@@ -43,7 +45,7 @@ FetchContent_Declare(tracy
 # ─── ImGui (no find_package - always from source) ───────────────────────────
 FetchContent_Declare(imgui
     GIT_REPOSITORY https://github.com/ocornut/imgui.git
-    GIT_TAG        v1.92.8-docking
+    GIT_TAG        v1.92.9b-docking
     GIT_SHALLOW    TRUE
 )
 
@@ -64,4 +66,4 @@ FetchContent_Declare(implot3d
 # ─── Populate all dependencies ──────────────────────────────────────────────
 # spdlog, glfw, tracy: find_package attempted first, fallback to source.
 # imgui, implot, implot3d: always downloaded (no CMake packaging upstream).
-FetchContent_MakeAvailable(spdlog glfw tracy imgui implot implot3d)
+FetchContent_MakeAvailable(spdlog tracy imgui implot implot3d)

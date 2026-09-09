@@ -155,31 +155,34 @@ class InputEventDispatcher
 public:
     /// @brief Constructs a dispatcher bound to an RoutedInputEvent reference.
     /// @param data The input event data to dispatch.
-    InputEventDispatcher(RoutedInputEvent& data) : m_Data(data)
+    InputEventDispatcher(RoutedInputEvent& routedEvent) : m_RoutedEvent(routedEvent)
     {
     }
 
-    /// @brief Dispatches the event to a handler if the variant holds type T.
-    /// @tparam T The concrete event type to match against.
-    /// @tparam F A callable taking T& and returning a value convertible to bool.
+    /// @brief Dispatches the event to a handler if the variant holds type TEvent.
+    /// @tparam TEvent The concrete event type to match against.
+    /// @tparam THandler A callable taking TEvent& and returning a value convertible to bool.
     /// @param func The handler function. Return true to mark the event as handled.
     /// @return True if the variant held type T and the handler was invoked.
-    template <Event T, typename F>
-        requires std::invocable<F, T&>
-    bool Dispatch(F&& func)
+    template <Event TEvent, typename THandler>
+        requires std::invocable<THandler, TEvent&>
+    bool Dispatch(THandler&& handler)
     {
-        if (auto* ev = std::get_if<T>(&m_Data.Event))
+        if (auto* ev = std::get_if<TEvent>(&m_RoutedEvent.Event))
         {
-            m_Data.Handled |= static_cast<bool>(std::invoke(std::forward<F>(func), *ev));
-            CoreLogger().trace(
-                "InputEventDispatcher: Matched '{}', handled={}.", T::Name, m_Data.Handled);
+            m_RoutedEvent.Handled |=
+                static_cast<bool>(std::invoke(std::forward<THandler>(handler), *ev));
+
+            CoreLogger().trace("InputEventDispatcher: Matched '{}', handled={}.",
+                               TEvent::Name,
+                               m_RoutedEvent.Handled);
             return true;
         }
         return false;
     }
 
 private:
-    RoutedInputEvent& m_Data;
+    RoutedInputEvent& m_RoutedEvent;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
